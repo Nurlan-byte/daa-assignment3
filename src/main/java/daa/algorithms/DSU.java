@@ -28,10 +28,10 @@ public class DSU {
     }
 
     private int root(int x) {
-        while (parent[x] != x) {
-            x = parent[x];
+        if (parent[x] != x) {
+            parent[x] = root(parent[x]);
         }
-        return x;
+        return parent[x];
     }
 
     public boolean union(int x, int y) {
