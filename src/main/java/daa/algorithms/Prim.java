@@ -18,21 +18,26 @@ public class Prim {
         });
         List<Edge> tree = new ArrayList<>();
         long total = 0;
-        if (g.n() == 0) {
-            return new MstResult(tree, 0, 0);
-        }
+        int components = 0;
 
-        visit(g, 0, inTree, pq, metrics);
-        while (!pq.isEmpty()) {
-            Edge e = pq.poll();
-            if (inTree[e.to]) {
+        for (int start = 0; start < g.n(); start++) {
+            if (inTree[start]) {
                 continue;
             }
-            tree.add(e);
-            total += e.weight;
-            visit(g, e.to, inTree, pq, metrics);
+            components++;
+            visit(g, start, inTree, pq, metrics);
+
+            while (!pq.isEmpty()) {
+                Edge e = pq.poll();
+                if (inTree[e.to]) {
+                    continue;
+                }
+                tree.add(e);
+                total += e.weight;
+                visit(g, e.to, inTree, pq, metrics);
+            }
         }
-        return new MstResult(tree, total, 1);
+        return new MstResult(tree, total, components);
     }
 
     private static void visit(Graph g, int v, boolean[] inTree, PriorityQueue<Edge> pq, Metrics metrics) {
