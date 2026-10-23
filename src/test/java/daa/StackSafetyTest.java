@@ -2,6 +2,7 @@ package daa;
 
 import daa.algorithms.Kosaraju;
 import daa.algorithms.SccResult;
+import daa.algorithms.Tarjan;
 import daa.graph.Graph;
 import daa.metrics.Metrics;
 import org.junit.jupiter.api.Test;
@@ -31,5 +32,10 @@ class StackSafetyTest {
         Graph g = path(100_000);
         g.addEdge(99_999, 0, 1);
         assertEquals(1, Kosaraju.run(g, new Metrics()).count);
+    }
+
+    @Test
+    void tarjanOnPathOf100000Vertices() {
+        assertEquals(100_000, Tarjan.run(path(100_000), new Metrics()).count);
     }
 }
