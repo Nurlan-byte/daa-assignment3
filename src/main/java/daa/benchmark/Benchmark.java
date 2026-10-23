@@ -5,6 +5,7 @@ import daa.algorithms.Kahn;
 import daa.algorithms.Kosaraju;
 import daa.algorithms.Kruskal;
 import daa.algorithms.Prim;
+import daa.algorithms.Tarjan;
 import daa.algorithms.TopoResult;
 import daa.graph.Graph;
 import daa.metrics.Metrics;
@@ -56,6 +57,7 @@ public class Benchmark {
 
     public static void main(String[] args) throws IOException {
         List<Row> rows = new ArrayList<>();
+        List<Row> tarjanRows = new ArrayList<>();
         int refIndex = 0;
 
         for (int n : SIZES) {
@@ -77,6 +79,10 @@ public class Benchmark {
                 check(kosaraju.result == ref[3], "SCC count " + kosaraju.result + " != reference " + ref[3]);
                 check(kosaraju.metrics.edgeScans == 2L * m, "Kosaraju must scan 2m edges");
                 System.out.println("  SCC count       " + kosaraju.result + "  (reference " + ref[3] + ") OK");
+                Row tarjan = measure("Tarjan", name, directed, mt -> (long) Tarjan.run(directed, mt).count);
+                check(tarjan.result == kosaraju.result, "Tarjan and Kosaraju differ on " + name);
+                tarjanRows.add(kosaraju);
+                tarjanRows.add(tarjan);
 
                 Graph dag = GraphGenerator.dag(n, m, SEED);
                 Row kahn = measure("Kahn", name, dag, mt -> (long) Kahn.run(dag, mt).order.size());
@@ -97,6 +103,7 @@ public class Benchmark {
         }
 
         write(Path.of("results", "results.csv"), rows);
+        write(Path.of("results", "tarjan_vs_kosaraju.csv"), tarjanRows);
         System.out.println("All reference values reproduced. " + rows.size() + " rows written to results/results.csv");
     }
 
